@@ -18,6 +18,6 @@ Require and register the Phoo class autoloader:
 
 Step 2
 ------
-Create a new instance of Phoo\Backlot to use in your code, and pass in your Oomyala partner code and secret code.
+Create a new instance of Phoo\Backlot to use in your code, and pass in your Ooyala partner code and secret code.
 
     $backlot = new \Phoo\Backlot($partnerCode, $secretCode);

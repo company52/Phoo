@@ -9,6 +9,10 @@ namespace Phoo;
  */
 class Backlot
 {
+    protected $_partnerCode;
+    protected $_secretCode;
+    
+    
     /**
      * @param string $partnerCode Parter code provided by Oomyala
      */
@@ -20,10 +24,12 @@ class Backlot
     
     
     /**
-     * Get signature 
+     * Get query object
      */
-    public function signature()
+    public function query(array $params = array())
     {
-        return "dDiJo3LKLqPnqCpzEHDYBBNBe%2FmBgV3%2BVt9eiTgFYGk";
+        $query = new Query($this->_partnerCode, $this->_secretCode);
+        $query->params($params);
+        return $query;
     }
 }
