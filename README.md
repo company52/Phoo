@@ -5,7 +5,10 @@ Developed by Company52
 
 Requirements
 ------------
-Phoo requires PHP 5.3.1 or greater to run.  
+* PHP 5.3.1 or greater (comes bundled with the [hash extension](http://www.php.net/manual/en/book.hash.php) for SHA-256 API signature generation)
+* [Ooyala](http://www.ooyala.com/) Account
+* Ooyala Provider ID / Partner Code (found in Backlot Account tab under Developers)
+* Ooyala Secret Code (found in Backlot Account tab under Developers)
 
 
 Step 1
