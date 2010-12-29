@@ -9,6 +9,16 @@ $autoloader->register();
 
 
 /**
+ * Helper to get backlot object for use in tests
+ * Used so credentials don't have to be repeted in all tests or globalized
+ */
+function phoo_backlot($partnerCode = "lsNTrbQBqCQbH-VA6ALCshAHLWrV", $secretCode = "hn-Rw2ZH-YwllUYkklL5Zo_7lWJVkrbShZPb5CD1") {
+    $backlot = new \Phoo\Backlot($partnerCode, $secretCode);
+    return $backlot;
+}
+
+
+/**
  * Autoload test classes
  */
 function test_phoo_autoloader($className) {

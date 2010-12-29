@@ -7,7 +7,7 @@ namespace Phoo;
  * @package Phoo
  * @link http://github.com/company52/Phoo
  */
-class Query
+class Params
 {
     // Credentials
     protected $_partnerCode;
@@ -30,7 +30,7 @@ class Query
     /**
      * Set query parameters to send with request
      */
-    public function params(array $params = array())
+    public function set(array $params = array())
     {
         $this->_params = $this->_params + $params;
     }
@@ -39,7 +39,7 @@ class Query
     /**
      * Get signature hash for current query
      *
-     * @link 
+     * @link http://www.ooyala.com/support/docs/backlot_api#signing
      */
     public function signature()
     {

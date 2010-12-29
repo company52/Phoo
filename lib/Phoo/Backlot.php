@@ -24,12 +24,47 @@ class Backlot
     
     
     /**
-     * Get query object
+     * Get params object and optionally set key => value parameters
      */
-    public function query(array $params = array())
+    public function params(array $params = array())
     {
-        $query = new Query($this->_partnerCode, $this->_secretCode);
-        $query->params($params);
-        return $query;
+        $paramsObj = new Params($this->_partnerCode, $this->_secretCode);
+        $paramsObj->set($params);
+        return $paramsObj;
+    }
+    
+    
+    /**
+     * Normalize params to Params object so we can get signature hash and generate URL
+     *
+     * @return \Phoo\Params
+     * @throws \InvalidArgumentException
+     */
+    public function toParams($params)
+    {
+        // Params object already
+        if($params instanceof Params) {
+            return $params;
+        }
+        
+        // Array to Params object
+        if(null === $params) {
+            $params = array();
+        }
+        if(is_array($params)) {
+            return $this->params($params);
+        }
+        
+        // Bad type
+        throw new \InvalidArgumentException("Expected \$params to be array or " . __NAMESPACE__ . "\Params object. Given (" . gettype($params) . ")");
+    }
+    
+    
+    /**
+     *
+     */
+    public function query($params)
+    {
+        $params = $this->toParams($params);
     }
 }
