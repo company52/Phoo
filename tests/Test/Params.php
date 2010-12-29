@@ -30,4 +30,23 @@ class Test_Params extends PHPUnit_Framework_TestCase
         
         $this->assertEquals($params->signature(), "dDiJo3LKLqPnqCpzEHDYBBNBe%2FmBgV3%2BVt9eiTgFYGk");
     }
+    
+    
+    /**
+     * Example full API URL generated with all params and necessary pcode and signature hash
+     * @link http://www.ooyala.com/support/docs/backlot_api#signing
+     */
+    public function testParamsToString()
+    {
+        $backlot = phoo_backlot("lsNTrbQBqCQbH-VA6ALCshAHLWrV", "hn-Rw2ZH-YwllUYkklL5Zo_7lWJVkrbShZPb5CD1");
+        $params = $backlot->params(array(
+            'expires' => '1893013926',
+            'label' => array('any/some'),
+            'statistics' => '1d,2d,7d,28d,30d,31d,lifetime,',
+            'status' => 'upl,live,',
+            'title' => 'a'
+        ));
+        
+        $this->assertEquals("pcode=lsNTrbQBqCQbH-VA6ALCshAHLWrV&expires=1893013926&label[0]=any/some&statistics=1d,2d,7d,28d,30d,31d,lifetime,&status=upl,live,&title=a&signature=dDiJo3LKLqPnqCpzEHDYBBNBe%2FmBgV3%2BVt9eiTgFYGk", (string) $params);
+    }
 }

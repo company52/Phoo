@@ -2,7 +2,8 @@
 namespace Phoo;
 
 /**
- * Ooyala Backlot API wrapper
+ * Ooyala Params object
+ * Used to set key/value params to send with request and generate corresponding API Signature
  * 
  * @package Phoo
  * @link http://github.com/company52/Phoo
@@ -56,5 +57,19 @@ class Params
         //    - URI encode the signature specifically '+','=', and '/'
         $str = rawurlencode(trim(substr(base64_encode(hash('sha256', $str, true)), 0, 43), '='));
         return $str;
+    }
+    
+    
+    /**
+     * Output query string to append to URL endpoint with signature and partner code
+     *
+     * @return string
+     */
+    public function __toString()
+    {
+        $sig = $this->signature();
+        $params = array('pcode' => $this->_partnerCode) + $this->_params;
+        $str = urldecode(http_build_query($params, null, '&'));
+        return $str . "&signature=" . $sig;
     }
 }
