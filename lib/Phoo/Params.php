@@ -16,6 +16,7 @@ class Params
     
     // Query params
     protected $_params = array();
+    protected $_paramsRequired = array();
     
     
     /**
@@ -33,7 +34,32 @@ class Params
      */
     public function set(array $params = array())
     {
-        $this->_params = $this->_params + $params;
+        $this->_params = array_merge($this->_params, $params);
+    }
+    
+    
+    /**
+     * Set/get required parameters
+     */
+    public function required(array $params = array())
+    {
+        if(count($params) == 0) {
+            return $this->_paramsRequired;
+        }
+        $this->_paramsRequired = array_merge($this->_paramsRequired, $params);
+    }
+    
+    
+    public function checkRequiredParams()
+    {
+        $p &= $this->_paramsRequired;
+        
+        // Remove signature from requirements because it is automatically added when building the query string
+        if(isset($p['signature'])) {
+            unset($p['signature']);
+        }
+        
+        $missing = array_diff_key($p, $this->_params);
     }
     
     
