@@ -50,6 +50,11 @@ class Params
     }
     
     
+    /**
+     * Check params to ensure required ones are set
+     *
+     * @throws Exception
+     */
     public function checkRequiredParams()
     {
         $p &= $this->_paramsRequired;
@@ -60,6 +65,9 @@ class Params
         }
         
         $missing = array_diff_key($p, $this->_params);
+        if(count($missing) > 0) {
+            throw new \InvalidArgumentException("Required params missing (" . var_export($missing, true) . ")");
+        }
     }
     
     
