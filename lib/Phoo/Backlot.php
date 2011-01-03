@@ -12,6 +12,18 @@ class Backlot
     protected $_partnerCode;
     protected $_secretCode;
     
+    /**
+     * API URL endpoints for supported Backlot API functions
+     */
+    protected $_apiEndpoints = array(
+        'query' => 'http://www.ooyala.com/partner/query',
+        'thumbnail' => 'http://api.ooyala.com/partner/thumbnails',
+        'attribute' => 'http://api.ooyala.com/partner/edit',
+        'metadata' => 'http://api.ooyala.com/partner/set_metadata',
+        'labels' => 'http://api.ooyala.com/partner/labels',
+        'player' => 'http://api.ooyala.com/partner/players'
+    );
+    
     
     /**
      * @param string $partnerCode Parter code provided by Oomyala
@@ -67,7 +79,18 @@ class Backlot
     {
         $params = $this->toParams($params)
             ->required(array('pcode', 'expires', 'signature'));
-        return $this->_fetch("http://www.ooyala.com/partner/query", $params, "GET");
+        return $this->_fetch($this->_apiEndpoints['query'], $params, "GET");
+    }
+    
+    
+    /**
+     * Thumbnais Query API
+     */
+    public function thumbnails($params)
+    {
+        $params = $this->toParams($params)
+            ->required(array('pcode', 'expires', 'embedCode', 'range', 'resolution', 'signature'));
+        return $this->_fetch($this->_apiEndpoints['thumbnail'], $params, "GET");
     }
     
     
