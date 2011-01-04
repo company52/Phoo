@@ -174,6 +174,6 @@ class Backlot
             throw new Exception(__METHOD__ . " Requres the cURL library to work.");
         }
         
-        return new Response($response, $responseInfo['http_code']);
+        return new Response($response, $responseInfo);
     }
 }

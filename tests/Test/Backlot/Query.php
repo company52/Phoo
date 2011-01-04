@@ -27,11 +27,27 @@ class Test_Backlot_Query extends PHPUnit_Framework_TestCase
     
     
     /**
+     * Inspect response to ensure it is a valid XML response
+     * 
      * @depends testQueryReturnsResponseObject
      */
-    public function testQueryReturnsResponseObjectX($res)
+    public function testQueryResponseIsXML($res)
     {
-        $this->assertInstanceOf('\Phoo\Response', $res);
-        return $res;
+        $xml = $res->parse();
+        
+        $this->assertInstanceOf('\SimpleXMLElement', $xml);
+        return $xml;
+    }
+    
+    
+    /**
+     * Inspect response to ensure it has valid XML nodes we were expecting
+     * 
+     * @depends testQueryResponseIsXML
+     */
+    public function testQueryResponseContainsItemNodes($xml)
+    {
+        $this->assertGreaterThan(0, count($xml->item), "No <item> nodes found");
+        return $xml;
     }
 }

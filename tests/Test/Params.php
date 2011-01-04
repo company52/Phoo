@@ -9,6 +9,7 @@ class Test_Params extends PHPUnit_Framework_TestCase
     
     /**
      * Example API credentials and resutling valid signature from Ooyala Backlot API docs
+     * 
      * @link http://www.ooyala.com/support/docs/backlot_api#signing
      */
     public function testSignatureGeneration()
@@ -34,6 +35,7 @@ class Test_Params extends PHPUnit_Framework_TestCase
     
     /**
      * Example full API URL generated with all params and necessary pcode and signature hash
+     * 
      * @link http://www.ooyala.com/support/docs/backlot_api#signing
      */
     public function testParamsToString()
@@ -71,6 +73,7 @@ class Test_Params extends PHPUnit_Framework_TestCase
     
     /**
      * Missing required parameters should throw an exception from \Phoo\Params::checkRequiredParams()
+     * 
      * @expectedException \UnexpectedValueException
      */
     public function testParamsMissingRequiredThrowsException()
