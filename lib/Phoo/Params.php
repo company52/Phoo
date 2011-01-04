@@ -35,6 +35,7 @@ class Params
     public function set(array $params = array())
     {
         $this->_params = array_merge($this->_params, $params);
+        return $this;
     }
     
     
@@ -47,6 +48,7 @@ class Params
             return $this->_paramsRequired;
         }
         $this->_paramsRequired = array_unique($this->_paramsRequired + array_flip($params));
+        return $this;
     }
     
     
@@ -69,7 +71,7 @@ class Params
         
         $missing = array_diff_key($this->_paramsRequired, $this->_params);
         if(count($missing) > 0) {
-            throw new \InvalidArgumentException("Required params missing (" . var_export($missing, true) . ")");
+            throw new \UnexpectedValueException("Required params missing (" . var_export($missing, true) . ")");
         }
     }
     
@@ -98,16 +100,31 @@ class Params
     
     
     /**
-     * Output query string to append to URL endpoint with signature and partner code
+     * Get query string from given params
      *
      * @return string
+     * @throws \UnexpectedValueException When required parameters are not set or given
      */
-    public function __toString()
+    public function queryString()
     {
         $sig = $this->signature();
         $this->checkRequiredParams();
         $params = array('pcode' => $this->_partnerCode) + $this->_params;
         $str = urldecode(http_build_query($params, null, '&'));
         return $str . "&signature=" . $sig;
+    }
+    
+    /**
+     * Output query string to append to URL endpoint with signature and partner code
+     *
+     * @return string
+     */
+    public function __toString()
+    {
+        try {
+            return $this->queryString();
+        } catch(\Exception $e) {
+            return $e->getTraceAsString();
+        }
     }
 }

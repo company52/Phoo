@@ -27,31 +27,10 @@ class Test_Backlot_Query extends PHPUnit_Framework_TestCase
     
     
     /**
-     * 
-     */
-    public function testQueryReturnsResponseObject2()
-    {
-        $backlot = phoo_backlot();
-        $params = $backlot->toParams(array(
-            'expires' => '1893013926',
-            'label' => array('any/some'),
-            'statistics' => '1d,2d,7d,28d,30d,31d,lifetime,',
-            'status' => 'upl,live,',
-            'title' => 'a'
-        ));
-        
-        $this->assertInstanceOf('\Phoo\Response', $res);
-        return $res;
-    }
-    
-    
-    /**
      * @depends testQueryReturnsResponseObject
      */
     public function testQueryReturnsResponseObjectX($res)
     {
-        echo (string) $res;
-        
         $this->assertInstanceOf('\Phoo\Response', $res);
         return $res;
     }
