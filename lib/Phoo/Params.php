@@ -43,10 +43,10 @@ class Params
      */
     public function required(array $params = array())
     {
-        if(count($params) == 0) {
+        if(0 == count($params)) {
             return $this->_paramsRequired;
         }
-        $this->_paramsRequired = array_merge($this->_paramsRequired, $params);
+        $this->_paramsRequired = array_unique($this->_paramsRequired + array_flip($params));
     }
     
     
@@ -57,14 +57,17 @@ class Params
      */
     public function checkRequiredParams()
     {
-        $p &= $this->_paramsRequired;
-        
         // Remove signature from requirements because it is automatically added when building the query string
-        if(isset($p['signature'])) {
-            unset($p['signature']);
+        if(isset($this->_paramsRequired['signature'])) {
+            unset($this->_paramsRequired['signature']);
         }
         
-        $missing = array_diff_key($p, $this->_params);
+        // Remove pcode from requirements because it is automatically prepended when building the query string
+        if(isset($this->_paramsRequired['pcode'])) {
+            unset($this->_paramsRequired['pcode']);
+        }
+        
+        $missing = array_diff_key($this->_paramsRequired, $this->_params);
         if(count($missing) > 0) {
             throw new \InvalidArgumentException("Required params missing (" . var_export($missing, true) . ")");
         }
@@ -102,6 +105,7 @@ class Params
     public function __toString()
     {
         $sig = $this->signature();
+        $this->checkRequiredParams();
         $params = array('pcode' => $this->_partnerCode) + $this->_params;
         $str = urldecode(http_build_query($params, null, '&'));
         return $str . "&signature=" . $sig;
