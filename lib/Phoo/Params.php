@@ -40,6 +40,24 @@ class Params
     
     
     /**
+     * Get param that has been set
+     */
+    public function __get($key)
+    {
+        return isset($this->_params[$key]) ? $this->_params[$key] : null;
+    }
+    
+    
+    /**
+     * Set param
+     */
+    public function __set($key, $value)
+    {
+        $this->_params[$key] = $value;
+    }
+    
+    
+    /**
      * Set/get required parameters
      */
     public function required(array $params = array())

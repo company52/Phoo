@@ -10,6 +10,7 @@ namespace Phoo;
  */
 class Response
 {
+    protected $_url;
     protected $_body;
     protected $_info;
     protected $_status;
@@ -18,8 +19,9 @@ class Response
     /**
      * Construct
      */
-    public function __construct($body, $info)
+    public function __construct($url, $body, $info)
     {
+        $this->_url = $url;
         $this->_body = $body;
         $this->_info = $info;
         $this->_status = $info['http_code'];

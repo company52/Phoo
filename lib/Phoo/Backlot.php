@@ -18,7 +18,7 @@ class Backlot
     protected $_apiEndpoints = array(
         'query' => 'http://www.ooyala.com/partner/query',
         'thumbnail' => 'http://api.ooyala.com/partner/thumbnails',
-        'attribute' => 'http://api.ooyala.com/partner/edit',
+        'attributes' => 'http://api.ooyala.com/partner/edit',
         'metadata' => 'http://api.ooyala.com/partner/set_metadata',
         'labels' => 'http://api.ooyala.com/partner/labels',
         'player' => 'http://api.ooyala.com/partner/players'
@@ -79,7 +79,7 @@ class Backlot
     {
         $params = $this->toParams($params)
             ->required(array('pcode', 'expires', 'signature'));
-        return $this->_fetch($this->_apiEndpoints['query'], $params, "GET");
+        return $this->_fetch($this->_apiEndpoints['query'], $params->queryString(), "GET");
     }
     
     
@@ -90,7 +90,58 @@ class Backlot
     {
         $params = $this->toParams($params)
             ->required(array('pcode', 'expires', 'embedCode', 'range', 'resolution', 'signature'));
-        return $this->_fetch($this->_apiEndpoints['thumbnail'], $params, "GET");
+        return $this->_fetch($this->_apiEndpoints['thumbnail'], $params->queryString(), "GET");
+    }
+    
+    
+    /**
+     * Attribute Update API
+     * 
+     * @param array $params Params used to find asset to update
+     * @param array $attrs Key=value attributes to set on selected asset
+     * @return \Phoo\Response
+     * @throws \UnexpectedValueException
+     */
+    public function setAttributes($params, array $attrs = array())
+    {
+        $params = $this->toParams($params)
+            ->required(array('pcode', 'expires', 'embedCode', 'signature'))
+            ->set($attrs);
+        
+        // Options are live, paused, or deleted
+        if(null !== $params->status && !in_array(strtolower($params->status), array("live", "paused", "deleted"))) {
+            throw new \UnexpectedValueException("Status can only be one of 'live', 'paused', or 'deleted'. Given (" . $params->status . ")");
+        }
+        
+        return $this->_fetch($this->_apiEndpoints['attributes'], $params->queryString(), "GET");
+    }
+    
+    
+    /**
+     * Metadata API
+     *
+     * @param array $params Params used to find asset to update
+     * @param array $attrs Key=value attributes to set on selected asset
+     * @return \Phoo\Response
+     * @throws \OverflowException
+     */
+    public function setMetadata($params, array $attrs = array())
+    {
+        $params = $this->toParams($params);
+        
+        // From API docs: A maximum of 100 name/value pairs can be set per asset.
+        if(100 > count($attrs)) {
+            throw new \OverflowException("A maximum of 100 name/value pairs can be set per asset. You attempted (" . count($attrs) . ").");
+        }
+        $params->set($attrs);
+        
+        // Format delete values according to docs
+        if(is_array($params->delete)) {
+            $params->delete = implode("\0", $params->delete);
+        }
+        
+        $params->required(array('pcode', 'expires', 'embedCode', 'signature'));
+        return $this->_fetch($this->_apiEndpoints['metadata'], $params->queryString(), "GET");
     }
     
     
@@ -174,6 +225,6 @@ class Backlot
             throw new Exception(__METHOD__ . " Requres the cURL library to work.");
         }
         
-        return new Response($response, $responseInfo);
+        return new Response($url, $response, $responseInfo);
     }
 }
