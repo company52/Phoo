@@ -146,6 +146,62 @@ class Backlot
     
     
     /**
+     * List existing labels for asset
+     */
+    public function listLabels($params)
+    {
+        $params = $this->toParams($params);
+        $params->mode = 'listLabels';
+        return $this->_labelsRequest($params);
+    }
+    
+    
+    /**
+     * Create labels for asset
+     */
+    public function createLabels($params, array $labels) {
+        $params = $this->toParams($params);
+        $params->set(array(
+            'mode' => 'createLabels',
+            'label' => $labels
+        ));
+        return $this->_labelsRequest($params);
+    }
+    
+    
+    /**
+     * Delete labels for asset
+     */
+    public function deleteLabels($params, array $labels)
+    {
+        $params = $this->toParams($params);
+        $params->set(array(
+            'mode' => 'deleteLabels',
+            'label' => $labels
+        ));
+        return $this->_labelsRequest($params);
+    }
+    
+    
+    public function assignLabels() {}
+    public function unassignLabels() {}
+    public function renameLabel() {}
+    public function clearLabels() {}
+    
+    
+    /**
+     * Perform an HTTP request to the Labels API endpoint
+     *
+     * @return \Phoo\Response
+     */
+    protected function _labelsRequest(Params $params)
+    {
+        $params->required(array('expires', 'mode'));
+        return $this->_fetch($this->_apiEndpoints['labels'], $params->queryString(), "GET");
+    }
+    
+    
+    /**
      * Fetch a URL with given parameters
      *
      * @return \Phoo\Response
