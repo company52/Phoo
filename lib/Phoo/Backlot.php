@@ -147,6 +147,9 @@ class Backlot
     
     /**
      * List existing labels for asset
+     *
+     * @param array $params Params used to find asset to update
+     * @return \Phoo\Response
      */
     public function listLabels($params)
     {
@@ -159,6 +162,10 @@ class Backlot
     
     /**
      * Create labels for asset
+     *
+     * @param array $params Params used to find asset to update
+     * @param array $labels List of labels
+     * @return \Phoo\Response
      */
     public function createLabels($params, array $labels)
     {
@@ -174,6 +181,10 @@ class Backlot
     
     /**
      * Delete labels for asset
+     *
+     * @param array $params Params used to find asset to update
+     * @param array $labels List of labels
+     * @return \Phoo\Response
      */
     public function deleteLabels($params, array $labels)
     {
@@ -189,6 +200,10 @@ class Backlot
     
     /**
      * Assign labels for asset
+     *
+     * @param array $params Params used to find asset to update
+     * @param array $labels List of labels
+     * @return \Phoo\Response
      */
     public function assignLabels($params, array $labels)
     {
@@ -213,6 +228,14 @@ class Backlot
         return $this->_labelsRequest($params);
     }
     
+    
+    /**
+     * Unassign labels for asset
+     *
+     * @param array $params Params used to find asset to update
+     * @param array $labels List of labels
+     * @return \Phoo\Response
+     */
     public function unassignLabels($params, array $labels)
     {
         $params = $this->toParams($params);
@@ -237,8 +260,58 @@ class Backlot
     }
     
     
-    public function renameLabel() {}
-    public function clearLabels() {}
+    /**
+     * Rename label across multiple assets
+     *
+     * @param array $params Params used to find asset to update
+     * @return \Phoo\Response
+     */
+    public function renameLabel($params)
+    {
+        $params = $this->toParams($params);
+        $params->mode = 'renameLabels';
+        $params->required(array('embedCodes', 'oldlabel', 'newlabel'));
+        
+        // If user set 'embedCode' like other API calls, go ahead and take care of it for them (convert to plural as needed by this specific API call).
+        if($params->embedCode && !$params->embedCodes) {
+            $params->embedCodes = (array) $params->embedCode;
+            unset($params->embedCode);
+        }
+        
+        // Make sure embedCodes are comma-separated if given as an array, per API docs
+        if(is_array($params->embedCodes)) {
+            $params->embedCodes = implode(',', $params->embedCodes);
+        }
+        
+        return $this->_labelsRequest($params);
+    }
+    
+    
+    /**
+     * Clear all labels from one or more assets
+     *
+     * @param array $params Params used to find asset to update
+     * @return \Phoo\Response
+     */
+    public function clearLabels($params)
+    {
+        $params = $this->toParams($params);
+        $params->mode = 'clearLabels';
+        $params->required(array('embedCodes'));
+        
+        // If user set 'embedCode' like other API calls, go ahead and take care of it for them (convert to plural as needed by this specific API call).
+        if($params->embedCode && !$params->embedCodes) {
+            $params->embedCodes = (array) $params->embedCode;
+            unset($params->embedCode);
+        }
+        
+        // Make sure embedCodes are comma-separated if given as an array, per API docs
+        if(is_array($params->embedCodes)) {
+            $params->embedCodes = implode(',', $params->embedCodes);
+        }
+        
+        return $this->_labelsRequest($params);
+    }
     
     
     /**
@@ -250,6 +323,73 @@ class Backlot
     {
         $params->required(array('expires', 'mode'));
         return $this->_fetch($this->_apiEndpoints['labels'], $params->queryString(), "GET");
+    }
+    
+    
+    /**
+     * Clear all labels from one or more assets
+     *
+     * @param array $params Params used to find asset to update
+     * @return \Phoo\Response
+     */
+    public function listPlayers($params)
+    {
+        $params = $this->toParams($params);
+        $params->mode = 'list';
+        $params->required(array('expires', 'mode'));
+        
+        // If user set 'embedCode' like other API calls, go ahead and take care of it for them (convert to plural as needed by this specific API call).
+        if($params->embedCode && !$params->embedCodes) {
+            $params->embedCodes = (array) $params->embedCode;
+            unset($params->embedCode);
+        }
+        
+        // Make sure embedCodes are comma-separated if given as an array, per API docs
+        if(is_array($params->embedCodes)) {
+            $params->embedCodes = implode(',', $params->embedCodes);
+        }
+        
+        return $this->_playerRequest($params);
+    }
+    
+    
+    /**
+     * Assigns a comma-separated list of video embed codes (or a single embed code) to a particular player.
+     * An existing player will be overwritten when using this mode.
+     *
+     * @param array $params Params used to find asset to update
+     * @return \Phoo\Response
+     */
+    public function assignPlayers($params)
+    {
+        $params = $this->toParams($params);
+        $params->mode = 'assign';
+        $params->required(array('expires', 'mode', 'embedCodes', 'pid'));
+        
+        // If user set 'embedCode' like other API calls, go ahead and take care of it for them (convert to plural as needed by this specific API call).
+        if($params->embedCode && !$params->embedCodes) {
+            $params->embedCodes = (array) $params->embedCode;
+            unset($params->embedCode);
+        }
+        
+        // Make sure embedCodes are comma-separated if given as an array, per API docs
+        if(is_array($params->embedCodes)) {
+            $params->embedCodes = implode(',', $params->embedCodes);
+        }
+        
+        return $this->_playerRequest($params);
+    }
+    
+    
+    /**
+     * Perform an HTTP request to the Labels API endpoint
+     *
+     * @return \Phoo\Response
+     */
+    protected function _playerRequest(Params $params)
+    {
+        $params->required(array('expires', 'mode'));
+        return $this->_fetch($this->_apiEndpoints['player'], $params->queryString(), "GET");
     }
     
     
