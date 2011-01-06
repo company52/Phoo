@@ -58,6 +58,23 @@ class Params
     
     
     /**
+     * Isset param?
+     */
+    public function __isset($key)
+    {
+        return isset($this->_params[$key]);
+    }
+    
+    
+    /**
+     * Unset param
+     */
+    public function __unset($key)
+    {
+        unset($this->_params[$key]);
+    }
+    
+    /**
      * Set/get required parameters
      */
     public function required(array $params = array())

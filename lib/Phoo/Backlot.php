@@ -152,6 +152,7 @@ class Backlot
     {
         $params = $this->toParams($params);
         $params->mode = 'listLabels';
+        $params->required(array('embedCode'));
         return $this->_labelsRequest($params);
     }
     
@@ -159,12 +160,14 @@ class Backlot
     /**
      * Create labels for asset
      */
-    public function createLabels($params, array $labels) {
+    public function createLabels($params, array $labels)
+    {
         $params = $this->toParams($params);
         $params->set(array(
             'mode' => 'createLabels',
             'label' => $labels
         ));
+        $params->required(array('embedCode'));
         return $this->_labelsRequest($params);
     }
     
@@ -179,12 +182,61 @@ class Backlot
             'mode' => 'deleteLabels',
             'label' => $labels
         ));
+        $params->required(array('embedCode'));
         return $this->_labelsRequest($params);
     }
     
     
-    public function assignLabels() {}
-    public function unassignLabels() {}
+    /**
+     * Assign labels for asset
+     */
+    public function assignLabels($params, array $labels)
+    {
+        $params = $this->toParams($params);
+        $params->set(array(
+            'mode' => 'assignLabels',
+            'label' => $labels
+            ));
+        $params->required(array('embedCodes'));
+        
+        // If user set 'embedCode' like other API calls, go ahead and take care of it for them (convert to plural as needed by this specific API call).
+        if($params->embedCode && !$params->embedCodes) {
+            $params->embedCodes = (array) $params->embedCode;
+            unset($params->embedCode);
+        }
+        
+        // Make sure embedCodes are comma-separated if given as an array, per API docs
+        if(is_array($params->embedCodes)) {
+            $params->embedCodes = implode(',', $params->embedCodes);
+        }
+        
+        return $this->_labelsRequest($params);
+    }
+    
+    public function unassignLabels($params, array $labels)
+    {
+        $params = $this->toParams($params);
+        $params->set(array(
+            'mode' => 'unassignLabels',
+            'label' => $labels
+            ));
+        $params->required(array('embedCodes'));
+        
+        // If user set 'embedCode' like other API calls, go ahead and take care of it for them (convert to plural as needed by this specific API call).
+        if($params->embedCode && !$params->embedCodes) {
+            $params->embedCodes = (array) $params->embedCode;
+            unset($params->embedCode);
+        }
+        
+        // Make sure embedCodes are comma-separated if given as an array, per API docs
+        if(is_array($params->embedCodes)) {
+            $params->embedCodes = implode(',', $params->embedCodes);
+        }
+        
+        return $this->_labelsRequest($params);
+    }
+    
+    
     public function renameLabel() {}
     public function clearLabels() {}
     
