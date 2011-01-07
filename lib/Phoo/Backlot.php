@@ -12,6 +12,9 @@ class Backlot
     protected $_partnerCode;
     protected $_secretCode;
     
+    protected $_client;
+    
+    
     /**
      * API URL endpoints for supported Backlot API functions
      */
@@ -79,7 +82,7 @@ class Backlot
     {
         $params = $this->toParams($params)
             ->required(array('pcode', 'expires', 'signature'));
-        return $this->_fetch($this->_apiEndpoints['query'], $params->queryString(), "GET");
+        return $this->client()->get($this->_apiEndpoints['query'], $params->queryString());
     }
     
     
@@ -90,7 +93,7 @@ class Backlot
     {
         $params = $this->toParams($params)
             ->required(array('pcode', 'expires', 'embedCode', 'range', 'resolution', 'signature'));
-        return $this->_fetch($this->_apiEndpoints['thumbnail'], $params->queryString(), "GET");
+        return $this->client()->get($this->_apiEndpoints['thumbnail'], $params->queryString());
     }
     
     
@@ -113,7 +116,7 @@ class Backlot
             throw new \UnexpectedValueException("Status can only be one of 'live', 'paused', or 'deleted'. Given (" . $params->status . ")");
         }
         
-        return $this->_fetch($this->_apiEndpoints['attributes'], $params->queryString(), "GET");
+        return $this->client()->get($this->_apiEndpoints['attributes'], $params->queryString());
     }
     
     
@@ -141,7 +144,7 @@ class Backlot
         }
         
         $params->required(array('pcode', 'expires', 'embedCode', 'signature'));
-        return $this->_fetch($this->_apiEndpoints['metadata'], $params->queryString(), "GET");
+        return $this->client()->get($this->_apiEndpoints['metadata'], $params->queryString());
     }
     
     
@@ -322,7 +325,7 @@ class Backlot
     protected function _labelsRequest(Params $params)
     {
         $params->required(array('expires', 'mode'));
-        return $this->_fetch($this->_apiEndpoints['labels'], $params->queryString(), "GET");
+        return $this->client()->get($this->_apiEndpoints['labels'], $params->queryString());
     }
     
     
@@ -389,90 +392,20 @@ class Backlot
     protected function _playerRequest(Params $params)
     {
         $params->required(array('expires', 'mode'));
-        return $this->_fetch($this->_apiEndpoints['player'], $params->queryString(), "GET");
+        return $this->client()->get($this->_apiEndpoints['player'], $params->queryString());
     }
     
     
     /**
-     * Fetch a URL with given parameters
+     * HTTP client to perform HTTP requests
      *
-     * @return \Phoo\Response
+     * @return \Phoo\Client
      */
-    protected function _fetch($url, $params = null, $method = 'GET')
+    public function client()
     {
-        $method = strtoupper($method);
-        
-        $urlParts = parse_url($url);
-        
-        // Build querystring for URL
-        if(is_array($params)) {
-            $queryString = http_build_query($params);
-        } else {
-            $queryString = (string) $params;
+        if(null === $this->_client) {
+            $this->_client = new Client();
         }
-        
-        // Append params to URL as query string if not a POST
-        if($method != 'POST') {
-            $url = $url . "?" . $queryString;
-        }
-        
-        //echo $url;
-        //var_dump("Fetching External URL: [" . $method . "] " . $url, $params);
-        
-        // Use cURL
-        if(function_exists('curl_init')) {
-            $ch = curl_init($urlParts['host']);
-            
-            // METHOD differences
-            switch($method) {
-                case 'GET':
-                    curl_setopt($ch, CURLOPT_URL, $url . "?" . $queryString);
-                break;
-                case 'POST':
-                    curl_setopt($ch, CURLOPT_URL, $url);
-                    curl_setopt($ch, CURLOPT_POST, true);
-                    curl_setopt($ch, CURLOPT_POSTFIELDS, $queryString);
-                break;
-                 
-                case 'PUT':
-                    curl_setopt($ch, CURLOPT_URL, $url);
-                    $putData = file_put_contents("php://memory", $queryString);
-                    curl_setopt($ch, CURLOPT_PUT, true);
-                    curl_setopt($ch, CURLOPT_INFILE, $putData);
-                    curl_setopt($ch, CURLOPT_INFILESIZE, strlen($queryString));
-                break;
-                 
-                case 'DELETE':
-                    curl_setopt($ch, CURLOPT_URL, $url . "?" . $queryString);
-                    curl_setopt($ch, CURLOPT_CUSTOMREQUEST, 'DELETE');
-                break;
-            }
-            
-            
-            curl_setopt($ch, CURLOPT_RETURNTRANSFER, true); // Return the data
-            curl_setopt($ch, CURLOPT_HEADER, false); // Get headers
-            
-            curl_setopt($ch, CURLOPT_TIMEOUT, 10);
-            curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, false);
-            curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
-            curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
-            curl_setopt($ch, CURLOPT_MAXREDIRS, 5);
-            
-            // HTTP digest authentication
-            if(isset($urlParts['user']) && isset($urlParts['pass'])) {
-                $authHeaders = array("Authorization: Basic ".base64_encode($urlParts['user'].':'.$urlParts['pass']));
-                curl_setopt($ch, CURLOPT_HTTPHEADER, $authHeaders);
-            }
-            
-            $response = curl_exec($ch);
-            $responseInfo = curl_getinfo($ch);
-            curl_close($ch);
-            
-        // Use streams... (eventually)
-        } else {
-            throw new Exception(__METHOD__ . " Requres the cURL library to work.");
-        }
-        
-        return new Response($url, $response, $responseInfo);
+        return $this->_client;
     }
 }
