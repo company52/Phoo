@@ -19,9 +19,9 @@ class Client
      * @param string $url URL to perform action on
      * @param optional array $params Array of key => value parameters to pass
      */
-    public function get($url, $params = array())
+    public function get($url, $params = array(), array $options = array())
     {
-        return $this->_fetch($url, $params, 'GET');
+        return $this->_fetch($url, $params, 'GET', $options);
     }
     
     
@@ -31,9 +31,9 @@ class Client
      * @param string $url URL to perform action on
      * @param optional array $params Array of key => value parameters to pass
      */
-    public function post($url, $params = array())
+    public function post($url, $params = array(), array $options = array())
     {
-        return $this->_fetch($url, $params, 'POST');
+        return $this->_fetch($url, $params, 'POST', $options);
     }
     
     
@@ -43,9 +43,9 @@ class Client
      * @param string $url URL to perform action on
      * @param optional array $params Array of key => value parameters to pass
      */
-    public function put($url, $params = array())
+    public function put($url, $params = array(), array $options = array())
     {
-        return $this->_fetch($url, $params, 'PUT');
+        return $this->_fetch($url, $params, 'PUT', $options);
     }
     
     
@@ -55,9 +55,9 @@ class Client
      * @param string $url URL to perform action on
      * @param optional array $params Array of key => value parameters to pass
      */
-    public function delete($url, $params = array())
+    public function delete($url, $params = array(), array $options = array())
     {
-        return $this->_fetch($url, $params, 'DELETE');
+        return $this->_fetch($url, $params, 'DELETE', $options);
     }
     
     
@@ -66,7 +66,7 @@ class Client
      *
      * @return \Phoo\Response
      */
-    protected function _fetch($url, $params = null, $method = 'GET')
+    protected function _fetch($url, $params = null, $method = 'GET', array $options = array())
     {
         $method = strtoupper($method);
         
@@ -100,6 +100,11 @@ class Client
                     curl_setopt($ch, CURLOPT_URL, $url);
                     curl_setopt($ch, CURLOPT_POST, true);
                     curl_setopt($ch, CURLOPT_POSTFIELDS, $queryString);
+                    // When given a fileHandle
+                    if(isset($options['fileHandle'])) {
+                        curl_setopt($ch, CURLOPT_INFILE, $options['fileHandle']);
+                        curl_setopt($ch, CURLOPT_INFILESIZE, filesize($options['fileHandle']));
+                    }
                 break;
                  
                 case 'PUT':
