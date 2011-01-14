@@ -161,6 +161,22 @@ class Params
         return $str . "&signature=" . $sig;
     }
     
+    
+    /**
+     * Get full parameter set as array of key => value pairs
+     *
+     * @return array
+     * @throws \UnexpectedValueException When required parameters are not set or given
+     */
+    public function toArray()
+    {
+        $sig = $this->signature();
+        $this->checkRequiredParams();
+        $params = array_merge(array('pcode' => $this->_partnerCode), $this->_params, array('signature' => $sig));
+        return $params;
+    }
+    
+    
     /**
      * Output query string to append to URL endpoint with signature and partner code
      *

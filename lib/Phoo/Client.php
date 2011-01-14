@@ -73,10 +73,10 @@ class Client
         $urlParts = parse_url($url);
         
         // Build querystring for URL
-        if(is_array($params)) {
-            $queryString = http_build_query($params);
-        } else {
+        if(!is_array($params)) {
             $queryString = (string) $params;
+        } else {
+            $queryString = $params;
         }
         
         // Append params to URL as query string if not a POST
@@ -97,14 +97,15 @@ class Client
                     curl_setopt($ch, CURLOPT_URL, $url . "?" . $queryString);
                 break;
                 case 'POST':
-                    curl_setopt($ch, CURLOPT_URL, $url);
                     curl_setopt($ch, CURLOPT_POST, true);
-                    curl_setopt($ch, CURLOPT_POSTFIELDS, $queryString);
                     // When given a fileHandle
                     if(isset($options['fileHandle'])) {
-                        curl_setopt($ch, CURLOPT_INFILE, $options['fileHandle']);
-                        curl_setopt($ch, CURLOPT_INFILESIZE, filesize($options['fileHandle']));
+                        if(!isset($options['fileSize'])) {
+                            throw new \InvalidArgumentException("If option 'fileHandle' is given, 'fileSize' option must also be present.");
+                        }
                     }
+                    curl_setopt($ch, CURLOPT_URL, $url);
+                    curl_setopt($ch, CURLOPT_POSTFIELDS, $queryString);
                 break;
                  
                 case 'PUT':
