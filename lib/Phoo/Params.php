@@ -116,7 +116,7 @@ class Params
             unset($this->_paramsRequired['pcode']);
         }
         
-        $missing = array_diff_key($this->_paramsRequired, $this->_params);
+        $missing = array_keys(array_diff_key($this->_paramsRequired, $this->_params));
         if(count($missing) > 0) {
             throw new \UnexpectedValueException("Required params missing (" . var_export($missing, true) . ")");
         }

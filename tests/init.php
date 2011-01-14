@@ -16,6 +16,25 @@ function phoo_backlot($partnerCode = "lsNTrbQBqCQbH-VA6ALCshAHLWrV", $secretCode
     $backlot = new \Phoo\Backlot($partnerCode, $secretCode);
     return $backlot;
 }
+function phoo_api($api, $partnerCode = "lsNTrbQBqCQbH-VA6ALCshAHLWrV", $secretCode = "hn-Rw2ZH-YwllUYkklL5Zo_7lWJVkrbShZPb5CD1") {
+    // API name
+    switch($api)
+    {
+        case 'backlot':
+            $api = new \Phoo\Backlot($partnerCode, $secretCode);
+        break;
+    
+        case 'ingestion':
+            $api = new \Phoo\Ingestion($partnerCode, $secretCode);
+        break;
+    
+        case 'analytics':
+            $api = new \Phoo\Analytics($partnerCode, $secretCode);
+        break;
+    }
+    
+    return $api;
+}
 
 
 /**

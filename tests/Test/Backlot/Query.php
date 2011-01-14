@@ -34,7 +34,6 @@ class Test_Backlot_Query extends PHPUnit_Framework_TestCase
     public function testQueryResponseIsXML($res)
     {
         $xml = $res->parse();
-        
         $this->assertInstanceOf('\SimpleXMLElement', $xml);
         return $xml;
     }
