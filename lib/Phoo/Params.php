@@ -74,6 +74,18 @@ class Params
         unset($this->_params[$key]);
     }
     
+    
+    /**
+     * Set default parameter values to send with request if not already specified
+     */
+    public function defaults(array $defaults)
+    {
+        // The plus operator on arrays only fills-in keys from the second array that are not already set in the first
+        $this->_params = $this->_params + $defaults;
+        return $this;
+    }
+    
+    
     /**
      * Set/get required parameters
      */
