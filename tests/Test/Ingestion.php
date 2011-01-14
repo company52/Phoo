@@ -37,7 +37,11 @@ class Test_Ingestion extends PHPUnit_Framework_TestCase
         try {
             $xml = $res->parse();
         } catch(\Exception $e) {
+            echo "\n\n";
+            echo $e->getMessage();
+            echo "\n";
             echo $res;
+            echo "\n\n";
         }
         $this->assertInstanceOf('\SimpleXMLElement', $xml);
         return $xml;

@@ -84,9 +84,6 @@ class Client
             $url = $url . "?" . $queryString;
         }
         
-        //echo $url;
-        //var_dump("Fetching External URL: [" . $method . "] " . $url, $params);
-        
         // Use cURL
         if(function_exists('curl_init')) {
             $ch = curl_init($urlParts['host']);
@@ -97,14 +94,8 @@ class Client
                     curl_setopt($ch, CURLOPT_URL, $url . "?" . $queryString);
                 break;
                 case 'POST':
-                    curl_setopt($ch, CURLOPT_POST, true);
-                    // When given a fileHandle
-                    if(isset($options['fileHandle'])) {
-                        if(!isset($options['fileSize'])) {
-                            throw new \InvalidArgumentException("If option 'fileHandle' is given, 'fileSize' option must also be present.");
-                        }
-                    }
                     curl_setopt($ch, CURLOPT_URL, $url);
+                    curl_setopt($ch, CURLOPT_POST, true);
                     curl_setopt($ch, CURLOPT_POSTFIELDS, $queryString);
                 break;
                  

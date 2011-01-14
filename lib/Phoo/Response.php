@@ -99,7 +99,9 @@ class Response
      */
     public function parse()
     {
-        if(false !== strpos($this->_info['content_type'], 'xml')) {
+        // XML response, acconting for inforrect Content-Type in the response headers
+        if(false !== strpos($this->_info['content_type'], 'xml')
+           || ($this->_info['content_type'] == 'text/html' && false !== strpos($this->_body, '<?xml '))) {
             return $this->fromXml();
         }
         

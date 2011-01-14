@@ -19,8 +19,12 @@ class Ingestion extends APIWrapper
     
     /**
      * Upload promo image for given video
+     *
+     * @param array $params Params used to find asset to update
+     * @param string $image Full absolute path to local image file that will be uploaded
+     * @return \Phoo\Response
      */
-    public function uploadPromoImage($params, $image, $imageSize = 0)
+    public function uploadPromoImage($params, $image)
     {
         $params = $this->toParams($params)
             ->required(array('pcode', 'expires', 'embed_code', 'signature'));
@@ -32,84 +36,10 @@ class Ingestion extends APIWrapper
         }
         
         // Handle file upload
-        $opts = array();
-        if(is_resource($image)) {
-            $opts['fileHandle'] = $image;
-            if($imageSize < 1) {
-                throw new \InvalidArgumentException("Parameter 3 expected to be filesize since resource handle was given for parameter 2.");
-            }
-            $opts['fileSize'] = $imageSize;
-        } else {
-            $fh = false;
-            if(is_string($image)) {
-                $fh = @fopen($image, 'r');
-            }
-            
-            // Bad file
-            if(!$fh) {
-                throw new \InvalidArgumentException("Parameter 2 expected to be local file or resource handle. Given (" . gettype($image) . ")");
-            }
-            
-            $opts['fileHandle'] = $fh;
-            $opts['fileSize'] = filesize($image);
+        if(!is_string($image)) {
+            throw new \InvalidArgumentException("Image (2nd parameter) expected to be string. Given (" . gettype($image) . ").");
         }
         
-        
-        // HTTP stream context
-        $context = stream_context_create(array(
-            'http' => array(
-                'method' => 'POST',
-                'request_fulluri' => true,
-                'header' => "Content-type: multipart/form-data\r\n" .
-                            "Content-Length: " . filesize($image),
-                'content' => file_get_contents($image)
-            )
-        ));
-        
-        
-        /**
-         * @link http://www.php.net/manual/en/function.stream-context-create.php#90411
-         */
-        /*
-        $data = ""; 
-        $boundary = "---------------------".substr(md5(rand(0,32000)), 0, 10);
-        
-        // Collect Postdata 
-        foreach($postdata as $key => $val) 
-        { 
-            $data .= "--$boundary\n"; 
-            $data .= "Content-Disposition: form-data; name=\"".$key."\"\n\n".$val."\n"; 
-        } 
-         
-        $data .= "--$boundary\n"; 
-        
-        // Collect Filedata 
-        foreach($files as $key => $file) 
-        { 
-            $fileContents = file_get_contents($file['tmp_name']); 
-            
-            $data .= "Content-Disposition: form-data; name=\"{$key}\"; filename=\"{$file['name']}\"\n"; 
-            $data .= "Content-Type: image/jpeg\n"; 
-            $data .= "Content-Transfer-Encoding: binary\n\n"; 
-            $data .= $fileContents."\n"; 
-            $data .= "--$boundary--\n"; 
-        } 
-        
-        $url = $this->_apiEndpoints['promoImage'];
-        $fp = fopen($url, 'rb', false, $context); 
-        if(!$fp) { 
-           throw new \Exception("Problem with $url, $php_errormsg"); 
-        } 
-        
-        $response = @stream_get_contents($fp); 
-        if($response === false) { 
-           throw new \Exception("Problem reading data from $url, $php_errormsg"); 
-        } 
-        return $response;
-        
-        var_dump($result);
-        exit();
-        */
-        return $this->client()->post($this->_apiEndpoints['promoImage'], $params->toArray() + array('file' => '@' . $image), $opts);
+        return $this->client()->post($this->_apiEndpoints['promoImage'] . '?' . $params->queryString(), array('file' => '@' . $image));
     }
 }
