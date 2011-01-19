@@ -25,6 +25,45 @@ class Response
         $this->_body = $body;
         $this->_info = $info;
         $this->_status = $info['http_code'];
+        
+        // Exceptions for invalid or error HTTP response
+        $status = $this->_status;
+        if($status >= 400) {
+            switch($status) {
+                // 4xx
+                case 400:
+                    throw new Exception\Http\BadRequest("");
+                break;
+                case 401:
+                    throw new Exception\Http\Unauthorized("");
+                break;
+                case 403:
+                    throw new Exception\Http\Forbidden("");
+                break;
+                case 404:
+                    throw new Exception\Http\NotFound("");
+                break;
+                case 405:
+                    throw new Exception\Http\MethodNotAllowed("");
+                break;
+                case 406:
+                    throw new Exception\Http\NotAccecptable("");
+                break;
+                // 5xx
+                case 500:
+                    throw new Exception\Http\InternalServerError("");
+                break;
+                case 502:
+                    throw new Exception\Http\BadGateway("");
+                break;
+                case 503:
+                    throw new Exception\Http\ServiceUnavailable("");
+                break;
+                default:
+                    throw new Exception\Http("HTTP " . $status . " Error Returned", $status);
+                break;
+            }
+        }
     }
     
     
@@ -99,44 +138,6 @@ class Response
      */
     public function parse()
     {
-        $status = $this->status();
-        if($status >= 400) {
-            switch($status) {
-                // 4xx
-                case 400:
-                    throw new Exception\Http\BadRequest("");
-                break;
-                case 401:
-                    throw new Exception\Http\Unauthorized("");
-                break;
-                case 403:
-                    throw new Exception\Http\Forbidden("");
-                break;
-                case 404:
-                    throw new Exception\Http\NotFound("");
-                break;
-                case 405:
-                    throw new Exception\Http\MethodNotAllowed("");
-                break;
-                case 406:
-                    throw new Exception\Http\NotAccecptable("");
-                break;
-                // 5xx
-                case 500:
-                    throw new Exception\Http\InternalServerError("");
-                break;
-                case 502:
-                    throw new Exception\Http\BadGateway("");
-                break;
-                case 503:
-                    throw new Exception\Http\ServiceUnavailable("");
-                break;
-                default:
-                    throw new Exception\Http("HTTP " . $status . " Error Returned", $status);
-                break;
-            }
-        }
-        
         // XML response, acconting for inforrect Content-Type in the response headers
         if(false !== strpos($this->_info['content_type'], 'xml')
            || ($this->_info['content_type'] == 'text/html' && false !== strpos($this->_body, '<?xml '))) {
