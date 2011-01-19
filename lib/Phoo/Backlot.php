@@ -3,7 +3,7 @@ namespace Phoo;
 
 /**
  * Ooyala Backlot API wrapper
- * 
+ *
  * @package Phoo
  * @link http://github.com/company52/Phoo
  */
@@ -46,7 +46,7 @@ class Backlot extends APIWrapper
     
     /**
      * Attribute Update API
-     * 
+     *
      * @param array $params Params used to find asset to update
      * @param array $attrs Key=value attributes to set on selected asset
      * @return \Phoo\Response
@@ -105,7 +105,7 @@ class Backlot extends APIWrapper
     {
         $params = $this->toParams($params);
         $params->mode = 'listLabels';
-        $params->required(array('embedCode'));
+        $params->required(array('expires'));
         return $this->_labelsRequest($params);
     }
     

@@ -49,7 +49,7 @@ class Test_Params extends PHPUnit_Framework_TestCase
             'title' => 'a'
         ));
         
-        $this->assertEquals("pcode=lsNTrbQBqCQbH-VA6ALCshAHLWrV&expires=1893013926&label[0]=any/some&statistics=1d,2d,7d,28d,30d,31d,lifetime,&status=upl,live,&title=a&signature=dDiJo3LKLqPnqCpzEHDYBBNBe%2FmBgV3%2BVt9eiTgFYGk", $params->queryString());
+        $this->assertEquals("pcode=lsNTrbQBqCQbH-VA6ALCshAHLWrV&expires=1893013926&label%5B0%5D=any%2Fsome&statistics=1d%2C2d%2C7d%2C28d%2C30d%2C31d%2Clifetime%2C&status=upl%2Clive%2C&title=a&signature=dDiJo3LKLqPnqCpzEHDYBBNBe%2FmBgV3%2BVt9eiTgFYGk", $params->queryString());
     }
     
     /**

@@ -4,7 +4,7 @@ namespace Phoo;
 /**
  * Ooyala Params object
  * Used to set key/value params to send with request and generate corresponding API Signature
- * 
+ *
  * @package Phoo
  * @link http://github.com/company52/Phoo
  */
@@ -156,8 +156,8 @@ class Params
     {
         $sig = $this->signature();
         $this->checkRequiredParams();
-        $params = array('pcode' => $this->_partnerCode) + $this->_params;
-        $str = urldecode(http_build_query($params, null, '&'));
+        $params = array('pcode' => $this->_partnerCode, ) + $this->_params;
+        $str = http_build_query($params, null, '&');
         return $str . "&signature=" . $sig;
     }
     
