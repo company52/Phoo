@@ -8,7 +8,7 @@ namespace Phoo;
  * @package Phoo
  * @link http://github.com/company52/Phoo
  */
-class Player extends APIWrapper
+class Player
 {
     /**
      * Set query parameters to send with request
