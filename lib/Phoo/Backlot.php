@@ -80,7 +80,7 @@ class Backlot extends APIWrapper
         $params = $this->toParams($params);
         
         // From API docs: A maximum of 100 name/value pairs can be set per asset.
-        if(100 > count($attrs)) {
+        if(100 < count($attrs)) {
             throw new \OverflowException("A maximum of 100 name/value pairs can be set per asset. You attempted (" . count($attrs) . ").");
         }
         $params->set($attrs);
@@ -124,7 +124,6 @@ class Backlot extends APIWrapper
             'mode' => 'createLabels',
             'label' => $labels
         ));
-        $params->required(array('embedCode'));
         return $this->_labelsRequest($params);
     }
     
@@ -143,7 +142,6 @@ class Backlot extends APIWrapper
             'mode' => 'deleteLabels',
             'label' => $labels
         ));
-        $params->required(array('embedCode'));
         return $this->_labelsRequest($params);
     }
     
