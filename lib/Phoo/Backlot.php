@@ -18,7 +18,8 @@ class Backlot extends APIWrapper
         'attributes' => 'http://api.ooyala.com/partner/edit',
         'metadata' => 'http://api.ooyala.com/partner/set_metadata',
         'labels' => 'http://api.ooyala.com/partner/labels',
-        'player' => 'http://api.ooyala.com/partner/players'
+        'player' => 'http://api.ooyala.com/partner/players',
+        'channel' => 'http://api.ooyala.com/partner/channels'
     );
     
     
@@ -338,5 +339,77 @@ class Backlot extends APIWrapper
     {
         $params->required(array('expires', 'mode'));
         return $this->client()->get($this->_apiEndpoints['player'], $params->queryString());
+    }
+    
+    
+    /**
+     * Lists all channel components
+     *
+     * @param array $params Params used for request
+     * @param string String title of channel
+     * @return \Phoo\Response
+     */
+    public function createChannel($params, $title)
+    {
+        $params = $this->toParams($params);
+        $params->mode = 'create';
+        $params->title = $title;
+        $params->required(array('expires', 'mode', 'title'));
+        return $this->_channelRequest($params);
+    }
+    
+    
+    /**
+     * Lists all channel components
+     *
+     * @param array $params Params used for request
+     * @return \Phoo\Response
+     */
+    public function listChannels($params)
+    {
+        $params = $this->toParams($params);
+        $params->mode = 'list';
+        $params->required(array('expires', 'mode', 'channelEmbedCode'));
+        return $this->_channelRequest($params);
+    }
+    
+    
+    /**
+     * Assigns a comma-separated list of video embed codes (or a single embed code) to a particular player.
+     * An existing player will be overwritten when using this mode.
+     *
+     * @param array $params Params used to find asset to update
+     * @return \Phoo\Response
+     */
+    public function assignChannels($params)
+    {
+        $params = $this->toParams($params);
+        $params->mode = 'assign';
+        $params->required(array('expires', 'mode', 'channelEmbedCode', 'embedCodes'));
+        
+        // If user set 'embedCode' like other API calls, go ahead and take care of it for them (convert to plural as needed by this specific API call).
+        if($params->embedCode && !$params->embedCodes) {
+            $params->embedCodes = (array) $params->embedCode;
+            unset($params->embedCode);
+        }
+        
+        // Make sure embedCodes are comma-separated if given as an array, per API docs
+        if(is_array($params->embedCodes)) {
+            $params->embedCodes = implode(',', $params->embedCodes);
+        }
+        
+        return $this->_channelRequest($params);
+    }
+    
+    
+    /**
+     * Perform an HTTP request to the Labels API endpoint
+     *
+     * @return \Phoo\Response
+     */
+    protected function _channelRequest(Params $params)
+    {
+        $params->required(array('expires', 'mode'));
+        return $this->client()->get($this->_apiEndpoints['channel'], $params->queryString());
     }
 }
