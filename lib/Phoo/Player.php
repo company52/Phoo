@@ -10,6 +10,9 @@ namespace Phoo;
  */
 class Player
 {
+    protected $_params = array();
+    
+    
     /**
      * Set query parameters to send with request
      */
@@ -64,7 +67,7 @@ class Player
      */
     public function queryString()
     {
-        $str = http_build_query($params, null, '&');
+        $str = http_build_query($this->_params, null, '&');
         return $str;
     }
     
