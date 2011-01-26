@@ -343,7 +343,7 @@ class Backlot extends APIWrapper
     
     
     /**
-     * Lists all channel components
+     * Creates new channel
      *
      * @param array $params Params used for request
      * @param string String title of channel
@@ -396,6 +396,37 @@ class Backlot extends APIWrapper
         // Make sure embedCodes are comma-separated if given as an array, per API docs
         if(is_array($params->embedCodes)) {
             $params->embedCodes = implode(',', $params->embedCodes);
+        }
+        
+        return $this->_channelRequest($params);
+    }
+    
+    
+    /**
+     * Create dynamic channel
+     *
+     * @see http://www.ooyala.com/support/docs/backlot_api#dynamic_channel
+     * @param array $params Params used for request
+     * @param string String title of channel
+     * @return \Phoo\Response
+     */
+    public function createDynamicChannel($params)
+    {
+        $params = $this->toParams($params);
+        $params->required(array('expires', 'mode', 'title'));
+        
+        // Set default params to send
+        $params->set(array(
+            'mode' => 'create',
+            'dynamicChannel' => 'true'
+        ))
+        ->defaults(array(
+            'labels' => '*'
+        ));
+        
+        // Make sure labels are comma-separated if given as an array, per API docs
+        if(is_array($params->labels)) {
+            $params->labels = implode(',', $params->labels);
         }
         
         return $this->_channelRequest($params);
