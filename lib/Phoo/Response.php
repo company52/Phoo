@@ -32,35 +32,35 @@ class Response
             switch($status) {
                 // 4xx
                 case 400:
-                    throw new Exception\Http\BadRequest("");
+                    throw new Exception\Http\BadRequest($body, $status);
                 break;
                 case 401:
-                    throw new Exception\Http\Unauthorized("");
+                    throw new Exception\Http\Unauthorized($body, $status);
                 break;
                 case 403:
-                    throw new Exception\Http\Forbidden("");
+                    throw new Exception\Http\Forbidden($body, $status);
                 break;
                 case 404:
-                    throw new Exception\Http\NotFound("");
+                    throw new Exception\Http\NotFound($body, $status);
                 break;
                 case 405:
-                    throw new Exception\Http\MethodNotAllowed("");
+                    throw new Exception\Http\MethodNotAllowed($body, $status);
                 break;
                 case 406:
-                    throw new Exception\Http\NotAccecptable("");
+                    throw new Exception\Http\NotAccecptable($body, $status);
                 break;
                 // 5xx
                 case 500:
-                    throw new Exception\Http\InternalServerError("");
+                    throw new Exception\Http\InternalServerError($body, $status);
                 break;
                 case 502:
-                    throw new Exception\Http\BadGateway("");
+                    throw new Exception\Http\BadGateway($body, $status);
                 break;
                 case 503:
-                    throw new Exception\Http\ServiceUnavailable("");
+                    throw new Exception\Http\ServiceUnavailable($body, $status);
                 break;
                 default:
-                    throw new Exception\Http("HTTP " . $status . " Error Returned", $status);
+                    throw new Exception\Http($body, $status);
                 break;
             }
         }

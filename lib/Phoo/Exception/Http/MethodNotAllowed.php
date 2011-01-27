@@ -1,3 +1,4 @@
 <?php
 namespace Phoo\Exception\Http;
-class MethodNotAllowed extends Phoo\Exception\Http {}
+use Phoo\Exception\Http;
+class MethodNotAllowed extends Http {}

@@ -337,7 +337,8 @@ class Backlot extends APIWrapper
      */
     protected function _playerRequest(Params $params)
     {
-        $params->required(array('expires', 'mode'));
+        $params->required(array('expires', 'mode'))
+            ->defaults(array('expires' => strtotime('+1 hour')));;
         return $this->client()->get($this->_apiEndpoints['player'], $params->queryString());
     }
     
@@ -354,7 +355,7 @@ class Backlot extends APIWrapper
         $params = $this->toParams($params);
         $params->mode = 'create';
         $params->title = $title;
-        $params->required(array('expires', 'mode', 'title'));
+        $params->required(array('title'));
         return $this->_channelRequest($params);
     }
     
@@ -369,7 +370,7 @@ class Backlot extends APIWrapper
     {
         $params = $this->toParams($params);
         $params->mode = 'list';
-        $params->required(array('expires', 'mode', 'channelEmbedCode'));
+        $params->required(array('channelEmbedCode'));
         return $this->_channelRequest($params);
     }
     
@@ -385,7 +386,7 @@ class Backlot extends APIWrapper
     {
         $params = $this->toParams($params);
         $params->mode = 'assign';
-        $params->required(array('expires', 'mode', 'channelEmbedCode', 'embedCodes'));
+        $params->required(array('channelEmbedCode', 'embedCodes'));
         
         // If user set 'embedCode' like other API calls, go ahead and take care of it for them (convert to plural as needed by this specific API call).
         if($params->embedCode && !$params->embedCodes) {
@@ -407,18 +408,19 @@ class Backlot extends APIWrapper
      *
      * @see http://www.ooyala.com/support/docs/backlot_api#dynamic_channel
      * @param array $params Params used for request
-     * @param string String title of channel
+     * @param string String title of dynamic channel
      * @return \Phoo\Response
      */
-    public function createDynamicChannel($params)
+    public function createDynamicChannel($params, $title)
     {
         $params = $this->toParams($params);
-        $params->required(array('expires', 'mode', 'title'));
+        $params->required(array('title'));
         
         // Set default params to send
         $params->set(array(
             'mode' => 'create',
-            'dynamicChannel' => 'true'
+            'dynamicChannel' => 'true',
+            'title' => $title
         ))
         ->defaults(array(
             'labels' => '*'
@@ -440,7 +442,8 @@ class Backlot extends APIWrapper
      */
     protected function _channelRequest(Params $params)
     {
-        $params->required(array('expires', 'mode'));
+        $params->required(array('expires', 'mode'))
+            ->defaults(array('expires' => strtotime('+1 hour')));
         return $this->client()->get($this->_apiEndpoints['channel'], $params->queryString());
     }
 }

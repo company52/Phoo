@@ -1,4 +1,7 @@
--<?php
+<?php
+// Set TZ to CST for tests
+date_default_timezone_set('America/Chicago');
+
 /**
  * @package Phoo
  * @link http://github.com/company52/Phoo

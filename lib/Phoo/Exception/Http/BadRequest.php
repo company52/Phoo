@@ -1,3 +1,4 @@
 <?php
 namespace Phoo\Exception\Http;
-class BadRequest extends Phoo\Exception\Http {}
+use Phoo\Exception\Http;
+class BadRequest extends Http {}
